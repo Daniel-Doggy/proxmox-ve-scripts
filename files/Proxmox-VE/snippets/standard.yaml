@@ -29,7 +29,7 @@ timezone: Europe/Berlin
 users:
   - name: admin
     ssh_authorized_keys:
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJ25G6ZCfNQh2PxOhrQIanl67ZAAA9evhuAHGDDkGedG Yubico Yubikey - Primary
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIACss3cEAow16htt4KyxzcQ9P4pZHTR7uJgSzOiOLXBI Yubikey - Primary
       - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHhimNIEqotLfqjACvjnokVvAgQfvz9BJEmlwoJSuHJZ Yubikey - Secondary
     sudo:  ALL=(ALL) NOPASSWD:ALL
     shell: /bin/bash
