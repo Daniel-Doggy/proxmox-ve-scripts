@@ -41,7 +41,7 @@ packages:
   - qemu-guest-agent
   - git
   - fail2ban
-  - dnsutils
+  - bind9-dnsutils
   - certbot
 runcmd:
   - systemctl enable qemu-guest-agent
