@@ -11,7 +11,7 @@ User=keycloak
 Group=keycloak
 LimitNOFILE=102642
 PIDFile=/run/keycloak/keycloak.pid
-ExecStart=/etc/keycloak/bin/kc.sh start
+ExecStart=/opt/keycloak/bin/kc.sh start
 StandardOutput=null
 
 [Install]
