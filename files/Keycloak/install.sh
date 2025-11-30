@@ -70,9 +70,9 @@ chown -R keycloak:keycloak /opt/keycloak/
 chmod o+rwx /opt/keycloak/bin/
 /opt/keycloak/bin/kc.sh build
 
+certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "${installdir}/keycloak-hook.sh"
 cp "${installdir}/keycloak-hook.sh" /etc/letsencrypt/renewal-hooks/deploy/
 chown 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
-certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}"
 
 cp "${installdir}/keycloak.service" /etc/systemd/system/
 systemctl daemon-reload
