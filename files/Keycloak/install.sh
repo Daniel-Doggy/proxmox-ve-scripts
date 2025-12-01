@@ -24,7 +24,7 @@
 
 keycloak_version="26.4.7"
 keycloak_db_username="keycloak_app"
-keycloak_admin_username=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32; echo)
+keycloak_admin_username="admin"
 
 mysql_root_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
 keycloak_db_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
