@@ -73,7 +73,7 @@ chmod o+rwx /opt/keycloak/bin/
 mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 cp "${installdir}/keycloak-hook.sh" /etc/letsencrypt/renewal-hooks/deploy/
 chmod 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
-certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}"
+certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "/etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh"
 
 cp "${installdir}/keycloak.service" /etc/systemd/system/
 systemctl daemon-reload
