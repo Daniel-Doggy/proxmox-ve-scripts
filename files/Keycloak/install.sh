@@ -22,7 +22,7 @@
 #	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #	SOFTWARE.
 
-keycloak_version="26.4.6"
+keycloak_version="26.4.7"
 keycloak_db_username="keycloak_app"
 keycloak_admin_username="admin"
 
