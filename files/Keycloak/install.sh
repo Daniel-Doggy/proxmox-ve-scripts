@@ -65,6 +65,9 @@ sed -i "/#https-certificate-key-file=/c\https-certificate-key-file=\$\{kc.home.d
 sed -i "/#hostname=/c\hostname=${serverhostname}" /opt/keycloak/conf/keycloak.conf
 sed -i "/#Environment=KC_BOOTSTRAP_ADMIN_USERNAME=/c\Environment=KC_BOOTSTRAP_ADMIN_USERNAME=\"${keycloak_admin_username}\"" "${installdir}/keycloak.service"
 sed -i "/#Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=/c\Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=\"${keycloak_admin_password}\"" "${installdir}/keycloak.service"
+cp "${installdir}/keycloak.service" /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable keycloak
 
 chown -R keycloak:keycloak /opt/keycloak/
 chmod o+rwx /opt/keycloak/bin/
@@ -74,11 +77,6 @@ mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 cp "${installdir}/keycloak-hook.sh" /etc/letsencrypt/renewal-hooks/deploy/
 chmod 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
 certbot certonly --staging --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "/etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh"
-
-cp "${installdir}/keycloak.service" /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable keycloak
-systemctl start keycloak
 
 sed -i "/Environment=KC_BOOTSTRAP_ADMIN_USERNAME=/c\#Environment=KC_BOOTSTRAP_ADMIN_USERNAME=" /etc/systemd/system/keycloak.service
 sed -i "/Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=/c\#Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=" /etc/systemd/system/keycloak.service
