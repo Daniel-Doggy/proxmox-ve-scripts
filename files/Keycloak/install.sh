@@ -24,11 +24,11 @@
 
 keycloak_version="26.4.7"
 keycloak_db_username="keycloak_app"
-keycloak_admin_username="admin"
+keycloak_admin_username=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32; echo)
+keycloak_admin_password=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32; echo)
 
 mysql_root_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
 keycloak_db_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
-keycloak_admin_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
 installdir=$(dirname "$(realpath -s "$0")")
 serverip=$(hostname -I | awk '{print $1}')
 serverhostname=$(dig -x $serverip +short | sed 's/\.[^.]*$//')
@@ -73,7 +73,7 @@ chmod o+rwx /opt/keycloak/bin/
 mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 cp "${installdir}/keycloak-hook.sh" /etc/letsencrypt/renewal-hooks/deploy/
 chmod 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
-certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "/etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh"
+certbot certonly --staging --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "/etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh"
 
 cp "${installdir}/keycloak.service" /etc/systemd/system/
 systemctl daemon-reload

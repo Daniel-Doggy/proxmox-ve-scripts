@@ -1,7 +1,6 @@
 [Unit]
-Description=The Keycloak Server
-After=syslog.target network.target
-Before=httpd.service
+Description=Keycloak SSO Server
+After=syslog.target network.target mysql.service
 
 [Service]
 Environment=LAUNCH_JBOSS_IN_BACKGROUND=1
@@ -12,7 +11,6 @@ Group=keycloak
 LimitNOFILE=102642
 PIDFile=/run/keycloak/keycloak.pid
 ExecStart=/opt/keycloak/bin/kc.sh start
-StandardOutput=null
 
 [Install]
 WantedBy=multi-user.target
