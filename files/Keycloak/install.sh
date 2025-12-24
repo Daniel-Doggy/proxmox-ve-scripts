@@ -22,13 +22,13 @@
 #	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #	SOFTWARE.
 
-keycloak_version="26.3.2"
+keycloak_version="26.4.7"
 keycloak_db_username="keycloak_app"
-keycloak_admin_username="admin"
+keycloak_admin_username=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32; echo)
+keycloak_admin_password=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32; echo)
 
 mysql_root_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
 keycloak_db_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
-keycloak_admin_password=$(tr -dc 'A-Za-z0-9!#%()*+,-.;<=>?^_{|}~' </dev/urandom | head -c 32; echo)
 installdir=$(dirname "$(realpath -s "$0")")
 serverip=$(hostname -I | awk '{print $1}')
 serverhostname=$(dig -x $serverip +short | sed 's/\.[^.]*$//')
@@ -65,19 +65,18 @@ sed -i "/#https-certificate-key-file=/c\https-certificate-key-file=\$\{kc.home.d
 sed -i "/#hostname=/c\hostname=${serverhostname}" /opt/keycloak/conf/keycloak.conf
 sed -i "/#Environment=KC_BOOTSTRAP_ADMIN_USERNAME=/c\Environment=KC_BOOTSTRAP_ADMIN_USERNAME=\"${keycloak_admin_username}\"" "${installdir}/keycloak.service"
 sed -i "/#Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=/c\Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=\"${keycloak_admin_password}\"" "${installdir}/keycloak.service"
+cp "${installdir}/keycloak.service" /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable keycloak
 
 chown -R keycloak:keycloak /opt/keycloak/
 chmod o+rwx /opt/keycloak/bin/
 /opt/keycloak/bin/kc.sh build
 
+mkdir -p /etc/letsencrypt/renewal-hooks/deploy/
 cp "${installdir}/keycloak-hook.sh" /etc/letsencrypt/renewal-hooks/deploy/
-chown 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
-certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}"
-
-cp "${installdir}/keycloak.service" /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable keycloak
-systemctl start keycloak
+chmod 755 /etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh
+certbot certonly --non-interactive --agree-tos --standalone --preferred-challenges http -d ${serverhostname} -m "admin@${serverhostname}" --deploy-hook "/etc/letsencrypt/renewal-hooks/deploy/keycloak-hook.sh"
 
 sed -i "/Environment=KC_BOOTSTRAP_ADMIN_USERNAME=/c\#Environment=KC_BOOTSTRAP_ADMIN_USERNAME=" /etc/systemd/system/keycloak.service
 sed -i "/Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=/c\#Environment=KC_BOOTSTRAP_ADMIN_PASSWORD=" /etc/systemd/system/keycloak.service
